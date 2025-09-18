@@ -1,13 +1,13 @@
-ARG CUDA_VERSION=12.6
+ARG CUDA_VERSION=10.2
 ARG TORCH_BASE=full
 
-FROM xxxxrt666/torch-base:cu${CUDA_VERSION}-${TORCH_BASE}
+FROM corex:4.3.0
 
 LABEL maintainer="XXXXRT"
 LABEL version="V4"
 LABEL description="Docker image for GPT-SoVITS"
 
-ARG CUDA_VERSION=12.6
+ARG CUDA_VERSION=10.2
 
 ENV CUDA_VERSION=${CUDA_VERSION}
 
@@ -32,7 +32,8 @@ COPY extra-req.txt /workspace/GPT-SoVITS/
 
 COPY requirements.txt /workspace/GPT-SoVITS/
 
-COPY install.sh /workspace/GPT-SoVITS/
+COPY install.sh /workspace/GPT-SoVITS/ 
+#--device CU102 --source ModelScope --download-uvr5
 
 RUN bash Docker/install_wrapper.sh
 

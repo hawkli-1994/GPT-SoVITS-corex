@@ -75,7 +75,7 @@ print_help() {
     echo "Usage: bash install.sh [OPTIONS]"
     echo ""
     echo "Options:"
-    echo "  --device   CU126|CU128|ROCM|MPS|CPU    Specify the Device (REQUIRED)"
+    echo "  --device   CU102|CU126|CU128|ROCM|MPS|CPU    Specify the Device (REQUIRED)"
     echo "  --source   HF|HF-Mirror|ModelScope     Specify the model source (REQUIRED)"
     echo "  --download-uvr5                        Enable downloading the UVR5 model"
     echo "  -h, --help                             Show this help message and exit"
@@ -121,6 +121,10 @@ while [[ $# -gt 0 ]]; do
             ;;
         CU128)
             CUDA=128
+            USE_CUDA=true
+            ;;
+        CU102)
+            CUDA=102
             USE_CUDA=true
             ;;
         ROCM)
@@ -328,6 +332,8 @@ if [ "$USE_CUDA" = true ] && [ "$WORKFLOW" = false ]; then
     elif [ "$CUDA" = 126 ]; then
         echo -e "${INFO}Installing PyTorch For CUDA 12.6..."
         run_pip_quiet torch torchaudio --index-url "https://download.pytorch.org/whl/cu126"
+    elif [ "$CUDA" = 102 ]; then
+        echo "already installed corex torch"
     fi
 elif [ "$USE_ROCM" = true ] && [ "$WORKFLOW" = false ]; then
     echo -e "${INFO}Installing PyTorch For ROCm 6.2..."
