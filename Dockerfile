@@ -34,7 +34,7 @@ COPY requirements.txt /workspace/GPT-SoVITS/
 
 COPY install.sh /workspace/GPT-SoVITS/ 
 #--device CU102 --source ModelScope --download-uvr5
-
+RUN apt install unzip -y
 RUN bash Docker/install_wrapper.sh
 
 EXPOSE 9871 9872 9873 9874 9880

@@ -49,7 +49,10 @@ run_pip_quiet() {
 
 run_wget_quiet() {
     if wget --tries=25 --wait=5 --read-timeout=40 -q --show-progress "$@" 2>&1; then
-        tput cuu1 && tput el
+        # 检查是否有终端环境，如果有则执行tput命令
+        if [ -t 1 ]; then
+            tput cuu1 && tput el
+        fi
     else
         echo -e "${ERROR} Wget failed"
         exit 1
@@ -257,6 +260,13 @@ elif [ "$USE_MODELSCOPE" = "true" ]; then
 fi
 
 if [ ! -d "GPT_SoVITS/pretrained_models/sv" ]; then
+    # 检查pretrained_models是否为符号链接，如果是则删除它并创建实际目录
+    if [ -L "GPT_SoVITS/pretrained_models" ]; then
+        echo -e "${INFO}Pretrained Models is a symlink, removing it to create actual directory"
+        rm "GPT_SoVITS/pretrained_models"
+        mkdir -p "GPT_SoVITS/pretrained_models"
+    fi
+    
     echo -e "${INFO}Downloading Pretrained Models..."
     rm -rf pretrained_models.zip
     run_wget_quiet "$PRETRINED_URL"
@@ -270,6 +280,13 @@ else
 fi
 
 if [ ! -d "GPT_SoVITS/text/G2PWModel" ]; then
+    # 检查G2PWModel是否为符号链接，如果是则删除它并创建实际目录
+    if [ -L "GPT_SoVITS/text/G2PWModel" ]; then
+        echo -e "${INFO}G2PWModel is a symlink, removing it to create actual directory"
+        rm "GPT_SoVITS/text/G2PWModel"
+        mkdir -p "GPT_SoVITS/text/G2PWModel"
+    fi
+    
     echo -e "${INFO}Downloading G2PWModel.."
     rm -rf G2PWModel.zip
     run_wget_quiet "$G2PW_URL"
@@ -287,6 +304,16 @@ if [ "$DOWNLOAD_UVR5" = "true" ]; then
         echo -e"${INFO}UVR5 Models Exists"
         echo -e "${INFO}Skip Downloading UVR5 Models"
     else
+        # 确保tools/uvr5目录存在
+        mkdir -p "tools/uvr5"
+        
+        # 检查uvr5是否为符号链接，如果是则删除它并创建实际目录
+        if [ -L "tools/uvr5" ]; then
+            echo -e "${INFO}UVR5 is a symlink, removing it to create actual directory"
+            rm "tools/uvr5"
+            mkdir -p "tools/uvr5"
+        fi
+        
         echo -e "${INFO}Downloading UVR5 Models..."
         rm -rf uvr5_weights.zip
         run_wget_quiet "$UVR5_URL"
